@@ -32,7 +32,7 @@ class Mean_Direct_Fidelity:
     def WWPauli(self,j):
         return SparsePauliOp.from_list([(self.WW[j], 1)])    
 #----------------------------------------------------------------    
-    def medidaNormalizada(self,j, 
+    def NormalizeMeasure(self,j, 
                             QuantumState,
                             estimator = Estimator() ,
                             shots = 1000  ):#Estimator is a class
@@ -82,11 +82,11 @@ class Mean_Direct_Fidelity:
                                 weights=(Chirho.real)**2, k=Npoints)
             for j in set(kreduce):
                 if j not in self.Medida:
-                    self.Medida[j] = self.medidaNormalizada(j, OMEGA, estimator, shots)
+                    self.Medida[j] = self.NormalizeMeasure(j, OMEGA, estimator, shots)
             sum = 0
             for j in set(kreduce):
-                repeticiones=kreduce.count(j)
-                sum += (1 / len(kreduce)) * (self.Medida[j]/ Chirho[j])*repeticiones
+                repetitions=kreduce.count(j)
+                sum += (1 / len(kreduce)) * (self.Medida[j]/ Chirho[j])*repetitions
             sumas.append(sum)  
         sumas = np.array(sumas).real
         return np.sum(sumas) / len(sumas)
