@@ -55,7 +55,7 @@ class Mean_Direct_Fidelity:
         RHO0 = np.array(RHO0)
         ChiRho = []
         for A in product(self.Sigmamu, repeat=self.NQ):
-            Chirhoprima.append( (1/np.sqrt(self.d)) 
+            ChiRho.append( (1/np.sqrt(self.d)) 
                                * np.dot(RHO0.conjugate(), 
                                         self.FastProd(RHO0, A, self.NQ)))
         return np.array(ChiRho)
@@ -74,21 +74,18 @@ class Mean_Direct_Fidelity:
         Omega        : mixed state as QuantumCircuit
         """
         Chirho = self.ChiRHO(RHO0)
-        sumas = []
+        totalsum = []
         
 
         for i in range(Nrepetitions):
             kreduce = rd.choices(range( self.d**2), 
-                                weights=(Chirho.real)**2, k=Npoints)
+                                weights=(Chirho.real)**2, k=Npoints)            
+            sum = 0
             for j in set(kreduce):
                 if j not in self.Medida:
                     self.Medida[j] = self.NormalizeMeasure(j, OMEGA, estimator, shots)
-            sum = 0
-            for j in set(kreduce):
                 repetitions=kreduce.count(j)
                 sum += (1 / len(kreduce)) * (self.Medida[j]/ Chirho[j])*repetitions
-            sumas.append(sum)  
-        sumas = np.array(sumas).real
-        return np.sum(sumas) / len(sumas)
-
-
+            totalsum.append(sum)  
+        totalsum = np.array(totalsum).real
+        return np.sum(totalsum) / len(totalsum)
