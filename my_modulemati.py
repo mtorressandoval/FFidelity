@@ -42,7 +42,7 @@ class Mean_Direct_Fidelity:
         
         return (1/np.sqrt(self.d))*(job.result().values[0])
 #----------------------------------------------------------------    
-    def PRod(self, psi_in, A, NQ):
+    def FastProd(self, psi_in, A, NQ):
         x = psi_in.copy()
         n = NQ
         for j in range(n, 0, -1):
@@ -53,12 +53,12 @@ class Mean_Direct_Fidelity:
 #-----------------------------------------------------------------    
     def ChiRHO(self,RHO0):
         RHO0 = np.array(RHO0)
-        Chirhoprima = []
+        ChiRho = []
         for A in product(self.Sigmamu, repeat=self.NQ):
             Chirhoprima.append( (1/np.sqrt(self.d)) 
                                * np.dot(RHO0.conjugate(), 
-                                        self.PRod(RHO0, A, self.NQ)))
-        return np.array(Chirhoprima)
+                                        self.FastProd(RHO0, A, self.NQ)))
+        return np.array(ChiRho)
 #-----------------------------------------------------------------    
     def MeanFidelity(self, 
                         Nrepetitions, 
