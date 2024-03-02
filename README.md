@@ -4,4 +4,4 @@ This project is based on the algorithm introduced in [Flammia-2011](http://dx.do
 
 ## Fidelity using few Pauli Matrices
 Let us considere two density states $\rho$ and $\sigma$. Here $\rho$ is a known pure state while $\sigma$ is the a quantum state that has to be reconstruct. The fidelity bewtween these two states is given by
-$$F(\rho,\sigma)=\operator{Tr}(\sigma\rho)$$
+$$F(\rho,\sigma)=\operatorname{tr}(\sigma\rho)$$
