@@ -1,4 +1,5 @@
-##FastFidelity using few PauliMatrices
+##FastFidelity using few PauliMatrices\\
+
 This project is based on the
 
 
