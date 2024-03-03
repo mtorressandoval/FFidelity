@@ -16,6 +16,6 @@ where the values of $\tilde{k}$ are chosen randomly with respect the probability
 In order to obtain the probability distribution $P(k)$ we need to perform $d^2$ measures on the state $\rho$. For a system of $n_{q}$ qubits, the operators $W_{k}$ will be equal to the tensor product of $n_{q}$ matrices of $2\times2$. For large number of qubits, this operation is highly expensive and the naive algorithm will take too time. We can accelerate the action of the tensor product by using the following relation
 
 Suppose $A(l)\in \mathbb{C}$ for $l=1,…,r$ and that $x∈\mathbb{C}^{d}$. The solutions relias in the following equality
-$$Y=C X B^T \Longleftrightarrow \mathrm{vec}(Y)=(B \otimes C) \operatorname{vec}(X)$$
+$$Y=C X B^T \Longleftrightarrow \mathrm{vec}(Y)=(B \otimes C) \mathrm{vec}(X)$$
 
 
