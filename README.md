@@ -1,4 +1,4 @@
-# FastFidelity using few PauliMatrices (workinprogress)
+# FastFidelity using few PauliMatrices (work-in-progress)
 
 This project is based on the algorithm introduced in [Flammia-2011](http://dx.doi.org/10.1103/PhysRevLett.106.230501), in companion with the optimization algorithm cpsa [Gidi-2021]().
 
