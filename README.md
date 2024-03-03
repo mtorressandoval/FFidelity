@@ -8,6 +8,6 @@ Let's consider two density states $\rho$ and $\sigma$. Here $\rho$ is a known pu
 $$F(\rho,\sigma)=\mathrm{tr}(\sigma\rho). $$
 Is it convenient to expand our states $\rho$ and $\sigma$ in term of Pauli-operators $W_{k}$ with $k=1,..,d^2$. In this basis the Fidelity takes the form
 $$F(\rho,\sigma)=\sum_{k=1}^{d^2}\chi_{\rho}(k)\chi_{\sigma}(k) $$.
-where $$\chi_{\rho}(k)=\mathrm{tr}(\rho W_{k}/\sqrt{d})$$. From this expresion we can construct an estimator of the Fidelity. Is it direct to see that $ P(k)=\chi_{\rho}(k)^2 $ corresponds to a probability distribution, and therefore, we can estimate the fidelity $F$ using a MonteCarlo simulation, this is
+where $\chi_{\rho}(k)=\mathrm{tr}(\rho W_{k}/\sqrt{d})$. From this expresion we can construct an estimator of the Fidelity. Is it direct to see that $ P(k)=\chi_{\rho}(k)^2 $ corresponds to a probability distribution, and therefore, we can estimate the fidelity $F$ using a MonteCarlo simulation, this is
 $$F(\rho,\sigma)=\sum_{\tilde{k}}\frac{\chi_{\sigma}}(k){\chi_{\rho}(k)}$$ 
 where the values of $\tilde{k}$ are chosen randomly with respect the probability distribution $P(k)$.
