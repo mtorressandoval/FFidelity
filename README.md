@@ -9,5 +9,5 @@ $$F(\rho,\sigma)=\mathrm{tr}(\sigma\rho). $$
 Is convenient to expand our states $\rho$ and $\sigma$ in term of Pauli-operators $W_{k}$ with $k=1,..,d^2$. In this basis the fidelity takes the form
 $$F(\rho,\sigma)=\sum_{k=1}^{d^2}\chi_{\rho}(k)\chi_{\sigma}(k), $$
 where $\chi_{\rho}(k)=\mathrm{tr}(\rho W_{k}/\sqrt{d})$. Giving that $ P(k)=\chi_{\rho}(k)^2 $ is a probability distribution, we can estimate the fidelity $F$, using a MonteCarlo simulation
-$$F(\rho,\sigma)\approx\sum_{\tilde{k}}\frac{\chi_{\sigma}(k)}{\chi_{\rho}(k)},$$ 
+$$F(\rho,\sigma)\approx\sum_{\tilde{k}}\frac{\chi_{\sigma}(\tilde{k})}{\chi_{\rho}(\tilde{k})},$$ 
 where the values of $\tilde{k}$ are chosen randomly with respect the probability distribution $P(k)$.
