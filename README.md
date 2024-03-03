@@ -12,4 +12,8 @@ where $\chi_{\rho}(k)=\mathrm{tr}(\rho W_{k}/\sqrt{d})$. Giving that $ P(k)=\chi
 $$F(\rho,\sigma)\approx\sum_{\tilde{k}}\frac{\chi_{\sigma}(\tilde{k})}{\chi_{\rho}(\tilde{k})},$$ 
 where the values of $\tilde{k}$ are chosen randomly with respect the probability distribution $P(k)$.
 
+## Fast Tensor Product
+
+In the general case
+
 
