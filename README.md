@@ -15,6 +15,17 @@ where the values of $\tilde{k}$ are chosen randomly with respect the probability
 
 In order to obtain the probability distribution $P(k)$ we need to perform $d^2$ measures on the state $\rho$. For a system of $n_{q}$ qubits, the operators $W_{k}$ will be equal to the tensor product of $n_{q}$ matrices of $2\times2$. For large number of qubits, this operation is highly expensive and the naive algorithm will take too time. We can accelerate the action of the tensor product by using the following relation
 $$(S\otimes T)X=SXT^{T}$$
-where the matrix $S$, $T$ and $X$ are of dimension $m\times m$, $n\times n$ and $m\times n$. Using the previous relation we can compute the action of chain of operators acting on a vector recursively.
+where the matrix $S$, $T$ and $X$ are of dimension $m\times m$, $n\times n$ and $m\times n$ respectively. Using the previous relation we can compute the action of chain of operators acting on a vector recursively. This is implmented via the function FastTensorProd
+
+``` python
+def FastTensorProd(A,state):
+    psi=state
+    psi=psi.reshape(len(state)//2, 2)
+    for aa in range(len(A)-1):
+        psi=psi@A[-aa-1].T
+    psi=psi.reshape(2,len(state)//2)
+    psi=A[0]@psi
+    return psi.flatten()
+```
 
 
