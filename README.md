@@ -14,18 +14,21 @@ where the values of $\tilde{k}$ are chosen randomly with respect the probability
 ## Fast Tensor Product
 
 In order to obtain the probability distribution $P(k)$ we need to perform $d^2$ measures on the state $\rho$. For a system of $n_{q}$ qubits, the operators $W_{k}$ will be equal to the tensor product of $n_{q}$ matrices of $2\times2$. For large number of qubits, this operation is highly expensive and the naive algorithm will take too time. We can accelerate the action of the tensor product by using the following relation
-$$(S\otimes T)X=SXT^{T}$$
+$$(A\otimes B)X=AXB^{T}$$
 where the matrix $S$, $T$ and $X$ are of dimension $m\times m$, $n\times n$ and $m\times n$ respectively. Using the previous relation we can compute the action of chain of operators acting on a vector recursively. This is implmented via the function FastTensorProd
 
 ``` python
-def FastTensorProd(A,state):
-    L=len(state)
-    state=state.reshape(L//2, 2)
+
+def FastTensorProd(A,x):
+#Given a list of matrices A = [Ar,...,A1] and a vector x,
+#return (Ar o ... o A1)x where o is the Kronecker product
+    L=len(x)
+    x=x.reshape(L//2, 2)
     for a in range(len(A)-1):
-        state=state@A[-a-1].T
-    state=state.reshape(2,L//2)
-    state=A[0]@state
-    return state.flatten()
+        x=x@A[-a-1].T
+    x=x.reshape(2,L//2)
+    x=A[0]@x
+    return x.flatten()
 ```
 
 
