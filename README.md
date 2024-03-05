@@ -14,6 +14,7 @@ where the values of $\tilde{k}$ are chosen randomly with respect the probability
 ## Fast Tensor Product
 
 In order to obtain the probability distribution $P(k)$ we need to perform $d^2$ measures on the state $\rho$. For a system of $n_{q}$ qubits, the operators $W_{k}$ will be equal to the tensor product of $n_{q}$ matrices of $2\times2$. For large number of qubits, this operation is highly expensive and the naive algorithm will take too time. We can accelerate the action of the tensor product by using the following relation
-$$(S\otimes T)X=SXT^{t}$$
-where the matrix $S$,$T$ and $X$ are of dimension $m\times m$, $n\times n$ and $m\times n$.
+$$(S\otimes T)X=SXT^{T}$$
+where the matrix $S$, $T$ and $X$ are of dimension $m\times m$, $n\times n$ and $m\times n$. Using the previous relation we can compute the action of chain of operators acting on a vector recursively.
+
 
