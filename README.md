@@ -20,8 +20,8 @@ where the matrix $S$, $T$ and $X$ are of dimension $m\times m$, $n\times n$ and 
 ``` python
 
 def FastTensorProd(A,x):
-#Given a list of matrices A = [Ar,...,A1] and a vector x,
-#return (Ar o ... o A1)x where o is the Kronecker product
+#Given a list of matrices A = [A1,...,ANQ] and a vector x,
+#return (A1 o ... o ANQ)x where o is the Kronecker product
     L=len(x)
     x=x.reshape(L//2, 2)
     for a in range(len(A)-1):
