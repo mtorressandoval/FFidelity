@@ -19,13 +19,13 @@ where the matrix $S$, $T$ and $X$ are of dimension $m\times m$, $n\times n$ and 
 
 ``` python
 def FastTensorProd(A,state):
-    psi=state
-    psi=psi.reshape(len(state)//2, 2)
-    for aa in range(len(A)-1):
-        psi=psi@A[-aa-1].T
-    psi=psi.reshape(2,len(state)//2)
-    psi=A[0]@psi
-    return psi.flatten()
+    L=len(state)
+    state=state.reshape(L//2, 2)
+    for a in range(len(A)-1):
+        state=state@A[-a-1].T
+    state=state.reshape(2,L//2)
+    state=A[0]@state
+    return state.flatten()
 ```
 
 
