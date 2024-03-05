@@ -45,13 +45,13 @@ class Mean_Direct_Fidelity:
     def FastTensorProd(self,A,x):
 #Given a list of matrices A = [A1,...,ANQ] and a vector x,
 #return (A1 o ... o ANQ)x where o is the Kronecker product
-    L=len(x)
-    x=x.reshape(L//2, 2)
-    for a in range(len(A)-1):
-        x=x@A[-a-1].T
-    x=x.reshape(2,L//2)
-    x=A[0]@x
-    return x.flatten()    
+        L=len(x)
+        x=x.reshape(L//2, 2)
+        for a in range(len(A)-1):
+            x=x@A[-a-1].T
+        x=x.reshape(2,L//2)
+        x=A[0]@x
+        return x.flatten()    
 #-----------------------------------------------------------------    
     def ChiRHO(self,RHO0):
         RHO0 = np.array(RHO0)
