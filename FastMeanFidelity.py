@@ -42,14 +42,16 @@ class Mean_Direct_Fidelity:
         
         return (1/np.sqrt(self.d))*(job.result().values[0])
 #----------------------------------------------------------------    
-    def FastProd(self, psi_in, A, NQ):
-        x = psi_in.copy()
-        n = NQ
-        for j in range(n, 0, -1):
-            x = np.reshape(x, ( -1, 2))
-            x = np.dot(A[j - 1], np.transpose(x))
-        psi_out = x.reshape(-1)
-        return psi_out     
+    def FastTensorProd(self,A,x):
+#Given a list of matrices A = [A1,...,ANQ] and a vector x,
+#return (A1 o ... o ANQ)x where o is the Kronecker product
+    L=len(x)
+    x=x.reshape(L//2, 2)
+    for a in range(len(A)-1):
+        x=x@A[-a-1].T
+    x=x.reshape(2,L//2)
+    x=A[0]@x
+    return x.flatten()    
 #-----------------------------------------------------------------    
     def ChiRHO(self,RHO0):
         RHO0 = np.array(RHO0)
@@ -57,7 +59,7 @@ class Mean_Direct_Fidelity:
         for A in product(self.Sigmamu, repeat=self.NQ):
             ChiRho.append( (1/np.sqrt(self.d)) 
                                * np.dot(RHO0.conjugate(), 
-                                        self.FastProd(RHO0, A, self.NQ)))
+                                        self.FastTensorProd(A,RHO0)))
         return np.array(ChiRho)
 #-----------------------------------------------------------------    
     def MeanFidelity(self, 
