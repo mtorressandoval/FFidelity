@@ -1,6 +1,6 @@
 # FastFidelity using few PauliMatrices (work-in-progress)
 
-This project is based on the algorithm introduced in [Flammia-2011](http://dx.doi.org/10.1103/PhysRevLett.106.230501), in companion with the optimization algorithm cpsa [Gidi-2021]().
+This project is based on the algorithm introduced in [Flammia-2011](https://arxiv.org/abs/1104.4695), in companion with the stochastic optimization algorithm cspsa [Gidi-2021](https://arxiv.org/abs/2203.06044).
 
 In the following lines I will describe each block of the code.
 ## Fidelity using few Pauli Matrices
