@@ -4,7 +4,7 @@ This project is based on the algorithm introduced in [Flammia-2011](https://arxi
 
 The idea behind the algorithm is to reconstruct an unkwnon state $\sigma$ by estimating the fildeity wiht respect a known state $\rho$.
 
-In the following lines I will describe each block of the code.
+In the following lines I will describe each block of the algorithm.
 ## Fidelity using few Pauli Matrices
 Let's consider two density states $\rho$ and $\sigma$. Here $\rho$ is a known pure state while $\sigma$ is the a quantum state that has to be reconstruct. The fidelity between these two states is given by
 $$F(\rho,\sigma)=\mathrm{tr}(\sigma\rho). $$
