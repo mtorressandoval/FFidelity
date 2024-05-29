@@ -2,11 +2,13 @@
 
 This project is based on the algorithm introduced in [Flammia-2011](https://arxiv.org/abs/1104.4695), in companion with the stochastic optimization algorithm cspsa [Gidi-2021](https://arxiv.org/abs/2203.06044).
 
-The algorithm aims to reconstruct an unkwnon state $\sigma$ by perfoming a minimal number of measures. To do so we use a known pure state $\rho$. The indicator of closeness between these two states is given by the fidelity.
-Our algorithm consist of three steps
-* Item 1 Approximate the Fidelity using a MonteCarlo. This will generate a diccionary with some measures
-* Item 2 Use CSPSA to maximize the Fidelity.
-* Item 3 Minimize the 
+The algorithm aims to reconstruct an unkwnon state $\sigma$ by perfoming a minimal number of measures. To do so we use a known pure state $\rho$ as reference state. We use as indicator of closeness between these two states the Fidelity $F$.
+Our algorithm consist of three steps:
+* Minimization and Randomness
+**  Approximate the Fidelity using a MonteCarlo approximation. This will generate a diccionary with some measures
+**  Use CSPSA to maximize the Fidelity.
+  
+*  Using the  
 
 
 In the following lines I will describe each block of the algorithm.
