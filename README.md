@@ -9,6 +9,7 @@ Our algorithm consist of three steps:
   *  Approximate the Fidelity using a MonteCarlo method.
   *  Use CSPSA to maximize the Fidelity.
 *  XX
+
 In the following lines I will describe each block of the algorithm.
 ## Fidelity using few Pauli Matrices
 Let's consider two density states $\rho$ and $\sigma$. Here $\rho$ is a known pure state while $\sigma$ is the a quantum state that has to be reconstruct. The fidelity between these two states is given by
