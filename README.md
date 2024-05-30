@@ -2,13 +2,13 @@
 
 This project is based on the algorithm introduced in [Flammia-2011](https://arxiv.org/abs/1104.4695), in companion with the stochastic optimization algorithm cspsa [Gidi-2021](https://arxiv.org/abs/2203.06044).
 
-The algorithm aims to reconstruct an unkwnon state $\sigma$ by perfoming a minimal number of measures. To do so we use a known pure state $\rho$ as reference state. We use as indicator of closeness between these two states the Fidelity $F$.
+The algorithm aims to reconstruct an unknown state $\sigma$ by performing a minimal number of measurements. To achieve this, we use a known pure state $\rho$ as a reference. The fidelity $F$ is used as an indicator of the closeness between these two states. By maximizing the fidelity we can reproduce $\sigma$.
 
 Our algorithm consist of three steps:
 * Random Average over the Hilbert space 
-  *  Approximate the Fidelity using a MonteCarlo method.
-  *  Use CSPSA to maximize the Fidelity.
-*  XX
+  * Approximate the Fidelity using a MonteCarlo method.
+  * Maximize the fidelity using cspsa.
+  *  XX
 
 In the following lines I will describe each block of the algorithm.
 ## Fidelity using few Pauli Matrices
@@ -37,5 +37,19 @@ def FastTensorProd(A,x):
     x=A[0]@x
     return x.flatten()
 ```
+Using this we can compute the projections along the Pauli-basis. This is done by the function Chi
 
-
+``` python
+def Chi(x,truncation=False):
+#Given a vector x, returns the normalize 
+        xc=x.conjugate()
+        alpha=(1/(self.d)**(0.5))
+        Chi = []
+        for A in product(self.Sigmamu, repeat=self.NQ):
+            chi=(1/np.sqrt(self.d))* np.dot(xc,self.FastTensorProd(A,x))
+            if truncation and  np.sqrt(self.d)*np.abs(chi)<alpha:
+                Chi.append(0)
+            else:
+                Chi.append(chi)     
+        return np.array(Chi)
+```
