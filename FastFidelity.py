@@ -33,7 +33,11 @@ class Mean_Direct_Fidelity:
                             j, 
                             QuantumState,
                             estimator = Estimator(),
-                            shots = 1000): #Expectation value of the operator W_j over the state QuantumState using Estimator()
+                            shots = 1000): 
+        """ 
+        QuantumState: QuantumState  as vector
+        j: Index of the Pauli operator
+        """
         job = estimator.run(QuantumState, 
                             SparsePauliOp.from_list([(self.W[j], 1)]), 
                             run_options = { 'shots' : shots } )
