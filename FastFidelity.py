@@ -3,7 +3,7 @@ from itertools import product
 from qiskit_aer.primitives import Estimator
 from qiskit.quantum_info import SparsePauliOp
 import random as rd
-
+from LinearAlgebra import InnerProductMatrices
 
 class Mean_Direct_Fidelity:
 
@@ -15,10 +15,10 @@ class Mean_Direct_Fidelity:
 
         sigma0 = np.array([[1, 0], [0, 1]])
         sigma1 = np.array([[0, 1], [1, 0]])
-        sigma2 = np.array([[0, -1j], [1j, 0]])
+        sigma2 = -np.array([[0, -1j], [1j, 0]])
         sigma3 = np.array([[1, 0], [0, -1]])
         Sigmamu=[sigma0, sigma1, sigma2, sigma3]
-        self.Measures={}
+        self.Measures={ 0: 1/np.sqrt(self.d) }
         self.Sigmamu = Sigmamu 
 
         SigmaL=['I','X','Y','Z']
@@ -41,7 +41,6 @@ class Mean_Direct_Fidelity:
         job = estimator.run(QuantumState, 
                             SparsePauliOp.from_list([(self.W[j], 1)]), 
                             run_options = { 'shots' : shots } )
-        
         return (1/np.sqrt(self.d))*(job.result().values[0])
 #----------------------------------------------------------------        
     def FastTensorProd(self,A,x):
@@ -61,13 +60,16 @@ class Mean_Direct_Fidelity:
         """
         xc=x.conjugate()
         alpha=(1/(self.d)**(0.5))
-        Chi = []
-        for A in product(self.Sigmamu, repeat=self.NQ):
-            chi=(1/np.sqrt(self.d))* np.dot(xc,self.FastTensorProd(A,x))
-            if truncation and  np.sqrt(self.d)*np.abs(chi)<alpha:
-                Chi.append(0)
-            else:
-                Chi.append(chi)     
+        # Chi = []
+        # for A in product(self.Sigmamu, repeat=self.NQ):
+        #     chi=(1/np.sqrt(self.d))* np.dot(xc,self.FastTensorProd(A,x))
+        #     if truncation and  np.sqrt(self.d)*np.abs(chi)<alpha:
+        #         Chi.append(0)
+        #     else:
+        #         Chi.append(chi)     
+        Chi = InnerProductMatrices( np.outer(x,xc), self.NQ*[self.Sigmamu] ).reshape(-1)
+        if truncation:
+            Chi[ np.sqrt(self.d)*np.abs(Chi)<alpha ] = 0
         return np.array(Chi)
 #-----------------------------------------------------------------    
     def MeanFidelity(self, 
@@ -85,12 +87,13 @@ class Mean_Direct_Fidelity:
         QuantumState : Mixed state as QuantumCircuit
         """
         Chix = self.Chi(x,
-                        truncation)
+                        truncation) / np.sqrt( self.d )
         sums = []
         for i in range(Nrepetitions):
             kreduce = rd.choices(range( self.d**2), 
                                 weights=(Chix.real)**2, 
                                 k=Npoints) # Montecarlo approximation with respect the probability Chix^2
+            self._kreduce = kreduce
             for j in set(kreduce):
                 if j not in self.Measures: #Check if we already measure the operator j
                     self.Measures[j] = self.Expectationvalue(j, 
