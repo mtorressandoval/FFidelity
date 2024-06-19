@@ -125,4 +125,75 @@ class Mean_Direct_Fidelity:
         return np.sum(sums) / len(sums)
 #-----------------------------------------------------------------    
 
+#---------------------------
+#---------------------------
+class Random_Measurements:
 
+    def __init__(self, 
+                NQ) -> None:
+        
+        self.NQ    = NQ
+        self.d     = 2**NQ 
+
+        sigma0 = np.array([[1, 0], [0, 1]])
+        sigma1 = np.array([[0, 1], [1, 0]])
+        sigma2 = -np.array([[0, -1j], [1j, 0]])
+        sigma3 = np.array([[1, 0], [0, -1]])
+        Sigmamu=[sigma0, sigma1, sigma2, sigma3]
+        self.Measures={ 0: 1/np.sqrt(self.d) }
+        self.Sigmamu = Sigmamu 
+
+        SigmaL=['I','X','Y','Z']
+        ChainSigmaL=list(product(SigmaL, repeat=NQ))
+        W=[]
+        for j in range(len(ChainSigmaL)):
+            W.append(''.join(ChainSigmaL[j])) 
+
+        self.W = W #List of the form [II,IX, XI,IY,..]
+
+    def Expectationvalue(self,
+                            j, 
+                            QuantumState,
+                            estimator = Estimator(),
+                            shots = 1000): 
+        """ 
+        QuantumState: QuantumState  as vector
+        j: Index of the Pauli operator
+        """
+        job = estimator.run(QuantumState, 
+                            SparsePauliOp.from_list([(self.W[j], 1)]), 
+                            run_options = { 'shots' : shots } )
+        return (1/np.sqrt(self.d))*(job.result().values[0])
+    
+    def RandomMeasurements( self,
+                            num,
+                            QuantumState,
+                            estimator = Estimator(),
+                            shots     = 1000,):
+        
+        kreduce = rd.sample( list(range( self.d**2)), num )
+
+        for j in set(kreduce):
+            if j not in self.Measures: #Check if we already measure the operator j
+                self.Measures[j] = self.Expectationvalue(j, 
+                                                        QuantumState,
+                                                        estimator,
+                                                        shots) 
+                
+    def Chi(self,x,truncation=False):
+        """ 
+        x: Pure state as vector
+        """
+        xc=x.conjugate()
+        alpha=(1/(self.d)**(0.5))
+        # Chi = []
+        # for A in product(self.Sigmamu, repeat=self.NQ):
+        #     chi=(1/np.sqrt(self.d))* np.dot(xc,self.FastTensorProd(A,x))
+        #     if truncation and np.sqrt(self.d)*np.abs(chi)<alpha:
+        #         Chi.append(0)
+        #     else:
+        #         Chi.append(chi)     
+        Chi = InnerProductMatrices( np.outer(x,xc), self.NQ*[self.Sigmamu] ).reshape(-1)
+        if truncation:
+            Chi[ np.sqrt(self.d)*np.abs(Chi)<alpha ] = 0
+        return np.array(Chi)

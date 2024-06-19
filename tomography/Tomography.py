@@ -6,27 +6,25 @@ from .cspsa import CSPSA
 def NearSparseTomography( phi, MDF ):
     """
     phi : initial condition for the search
-    MDF : FastFidelity class 
+    MDF : FastFidelity or RandomMeasurements class 
     """
     phi = phi / np.linalg.norm(phi)
     phi = np.array( [ phi.real, phi.imag ] )
-
-    if isinstance( MDF, Mean_Direct_Fidelity ):
     
-        def CostF( psi, MDF ): 
-            psi = psi.reshape(2,-1)
-            psi = psi[0] + 1j*psi[1]
-            M_d = MDF.Measures 
-            M   = MDF.Chi(psi,truncation=False) 
-            f   = 0
-            for j, _ in enumerate( M ):
-                if j in M_d:
-                    f += np.sum( np.abs( M_d[j] - M[j] )**2 ) 
-                else:
-                    f += 0.1*np.sum( np.abs( M[j] )**2 ) 
-            return f 
+    def CostF( psi, MDF ): 
+        psi = psi.reshape(2,-1)
+        psi = psi[0] + 1j*psi[1]
+        M_d = MDF.Measures 
+        M   = MDF.Chi(psi,truncation=False) 
+        f   = 0
+        for j, _ in enumerate( M ):
+            if j in M_d:
+                f += np.sum( np.abs( M_d[j] - M[j] )**2 ) 
+            else:
+                f += 0.1*np.sum( np.abs( M[j] )**2 ) 
+        return f 
 
-        results = minimize( CostF, phi, args=(MDF) )
+    results = minimize( CostF, phi, args=(MDF) )
 
     psi_hat = results.x / np.linalg.norm(results.x )
     psi_hat = psi_hat.reshape(2,-1)
