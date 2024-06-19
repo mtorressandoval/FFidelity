@@ -3,7 +3,7 @@ from itertools import product
 from qiskit_aer.primitives import Estimator
 from qiskit.quantum_info import SparsePauliOp
 import random as rd
-from LinearAlgebra import InnerProductMatrices
+from .LinearAlgebra import InnerProductMatrices
 
 class Mean_Direct_Fidelity:
 
@@ -63,7 +63,7 @@ class Mean_Direct_Fidelity:
         # Chi = []
         # for A in product(self.Sigmamu, repeat=self.NQ):
         #     chi=(1/np.sqrt(self.d))* np.dot(xc,self.FastTensorProd(A,x))
-        #     if truncation and  np.sqrt(self.d)*np.abs(chi)<alpha:
+        #     if truncation and np.sqrt(self.d)*np.abs(chi)<alpha:
         #         Chi.append(0)
         #     else:
         #         Chi.append(chi)     
@@ -71,6 +71,22 @@ class Mean_Direct_Fidelity:
         if truncation:
             Chi[ np.sqrt(self.d)*np.abs(Chi)<alpha ] = 0
         return np.array(Chi)
+#----------------------------------------------------------------
+    def RandomMeasurements( self,
+                            num,
+                            QuantumState,
+                            estimator = Estimator(),
+                            shots     = 1000,):
+        
+        kreduce = rd.sample( list(range( self.d**2)), num )
+
+        for j in set(kreduce):
+            if j not in self.Measures: #Check if we already measure the operator j
+                self.Measures[j] = self.Expectationvalue(j, 
+                                                        QuantumState,
+                                                        estimator,
+                                                        shots) 
+
 #-----------------------------------------------------------------    
     def MeanFidelity(self, 
                         Nrepetitions, 
@@ -86,6 +102,7 @@ class Mean_Direct_Fidelity:
         x            : Pure state as vector
         QuantumState : Mixed state as QuantumCircuit
         """
+        x = x/np.linalg.norm(x)
         Chix = self.Chi(x,
                         truncation) / np.sqrt( self.d )
         sums = []
