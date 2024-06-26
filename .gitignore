@@ -1,3 +1,6 @@
+# Custom personal dir
+do_not_sync/
+
 # Data
 data/
 *.npz
