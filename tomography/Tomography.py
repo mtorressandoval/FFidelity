@@ -2,9 +2,10 @@ import numpy as np
 from scipy.optimize import minimize
 from .LinearAlgebra import InnerProductMatrices
 from .cspsa import CSPSA
+from .FastFidelity import Mean_Direct_Fidelity
 
 
-def NearSparseTomography(phi, MDF):
+def NearSparseTomography(phi, MDF: Mean_Direct_Fidelity):
     """
     phi : initial condition for the search
     MDF : FastFidelity or RandomMeasurements class
@@ -35,7 +36,7 @@ def NearSparseTomography(phi, MDF):
     return psi_hat
 
 
-def NearSparseTomography_v2(phi, eigenvec, eigenval, MDF):
+def NearSparseTomography_v2(phi, eigenvec, eigenval, MDF: Mean_Direct_Fidelity):
     """
     phi : initial condition for the search
     MDF : FastFidelity or RandomMeasurements class
