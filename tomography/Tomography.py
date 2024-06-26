@@ -19,12 +19,14 @@ def NearSparseTomography(phi, MDF: Mean_Direct_Fidelity):
         psi = psi[0] + 1j * psi[1]
         M_d = MDF.Measures
         M = MDF.Chi(psi, truncation=False)
-        f = 0
-        for j, _ in enumerate(M):
+
+        f = 0.0
+        for j, Mj in enumerate(M):
             if j in M_d:
-                f += (M_d[j] - M[j]) ** 2
+                f += abs(M_d[j] - Mj) ** 2
             else:
-                f += 0.1 * M[j] ** 2
+                f += 0.1 * abs(Mj) ** 2
+
         return f
 
     results = minimize(CostF, phi, args=(MDF))
