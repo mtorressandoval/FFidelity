@@ -100,8 +100,9 @@ def InnerProductMatrices( X, B, Vectorized = False ):
 
 def LinearCombinationMatrices( c, B, Vectorized = False ):  
     
+    B = np.array(B)
     nsys = len(B)
-    nops = [ np.array(B[k]).shape[0] for k in range( nsys ) ] 
+    # nops = [ np.array(B[k]).shape[0] for k in range( nsys ) ] 
 
     if Vectorized == False:
         Dims = [ np.array(B[k]).shape[1] for k in range( nsys ) ]
