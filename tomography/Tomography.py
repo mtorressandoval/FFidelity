@@ -14,7 +14,7 @@ def NearSparseTomography(phi, MDF: Mean_Direct_Fidelity):
     phi = phi / np.linalg.norm(phi)
     phi = np.array([phi.real, phi.imag]).reshape(-1)
 
-    def CostF(psi, MDF):
+    def CostF(psi, MDF: Mean_Direct_Fidelity):
         psi = psi.reshape(2, -1)
         psi = psi[0] + 1j * psi[1]
         M_d = MDF.Measures
