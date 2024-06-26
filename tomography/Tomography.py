@@ -3,118 +3,127 @@ from scipy.optimize import minimize
 from .LinearAlgebra import InnerProductMatrices
 from .cspsa import CSPSA
 
-def NearSparseTomography( phi, MDF ):
+
+def NearSparseTomography(phi, MDF):
     """
     phi : initial condition for the search
-    MDF : FastFidelity or RandomMeasurements class 
+    MDF : FastFidelity or RandomMeasurements class
     """
 
     phi = phi / np.linalg.norm(phi)
-    phi = np.array( [ phi.real, phi.imag ] ).reshape(-1)
+    phi = np.array([phi.real, phi.imag]).reshape(-1)
 
-    def CostF( psi, MDF ): 
-        psi = psi.reshape(2,-1)
-        psi = psi[0] + 1j*psi[1] 
-        M_d = MDF.Measures 
-        M   = MDF.Chi(psi,truncation=False) 
-        f   = 0
-        for j, _ in enumerate( M ):
+    def CostF(psi, MDF):
+        psi = psi.reshape(2, -1)
+        psi = psi[0] + 1j * psi[1]
+        M_d = MDF.Measures
+        M = MDF.Chi(psi, truncation=False)
+        f = 0
+        for j, _ in enumerate(M):
             if j in M_d:
-                f += ( M_d[j] - M[j] )**2 
+                f += (M_d[j] - M[j]) ** 2
             else:
-                f += 0.1*M[j]**2  
-        return f 
+                f += 0.1 * M[j] ** 2
+        return f
 
-    results = minimize( CostF, phi, args=(MDF) )
+    results = minimize(CostF, phi, args=(MDF))
 
-    psi_hat = results.x / np.linalg.norm( results.x ) 
-    psi_hat = psi_hat.reshape(2,-1) 
-    psi_hat = psi_hat[0] + 1j*psi_hat[1] 
+    psi_hat = results.x / np.linalg.norm(results.x)
+    psi_hat = psi_hat.reshape(2, -1)
+    psi_hat = psi_hat[0] + 1j * psi_hat[1]
 
-    return psi_hat 
+    return psi_hat
 
-def NearSparseTomography_v2( phi, eigenvec, eigenval, MDF ): 
+
+def NearSparseTomography_v2(phi, eigenvec, eigenval, MDF):
     """
-    phi : initial condition for the search 
-    MDF : FastFidelity or RandomMeasurements class 
+    phi : initial condition for the search
+    MDF : FastFidelity or RandomMeasurements class
     """
 
     eigenproj = np.outer(eigenvec, eigenvec.conj())
 
-    phi = phi - eigenproj@phi
-    phi = phi / np.linalg.norm( phi, axis=0 )
-    phi = np.array( [ phi.real, phi.imag ] ).reshape(-1)
-    
-    def CostF( psi, MDF ): 
-        psi = psi.reshape( 2, MDF.d, -1) 
-        psi = psi[0] + 1j*psi[1]
+    phi = phi - eigenproj @ phi
+    phi = phi / np.linalg.norm(phi, axis=0)
+    phi = np.array([phi.real, phi.imag]).reshape(-1)
+
+    def CostF(psi, MDF):
+        psi = psi.reshape(2, MDF.d, -1)
+        psi = psi[0] + 1j * psi[1]
 
         # psi = psi - eigenproj@psi
         # psi = psi / np.linalg.norm( psi, axis=0 )
 
-        psi = psi @ psi.T.conj() 
-        psi = ( eigenval * eigenproj + (1-eigenval) * psi / np.trace(psi) ) 
+        psi = psi @ psi.T.conj()
+        psi = eigenval * eigenproj + (1 - eigenval) * psi / np.trace(psi)
 
-        M_d = MDF.Measures 
-        M   = InnerProductMatrices( psi, MDF.NQ*[MDF.Sigmamu] 
-                                ).reshape(-1).real / np.sqrt(MDF.d) 
-        f   = 0 
-        for j, Mj in enumerate( M ): 
-            if j in M_d: 
-                f += ( M_d[j] - Mj )**2  
-            else: 
-                f += 0.1*Mj**2  
-        return f.squeeze() 
+        M_d = MDF.Measures
+        M = InnerProductMatrices(psi, MDF.NQ * [MDF.Sigmamu]).reshape(
+            -1
+        ).real / np.sqrt(MDF.d)
+        f = 0
+        for j, Mj in enumerate(M):
+            if j in M_d:
+                f += (M_d[j] - Mj) ** 2
+            else:
+                f += 0.1 * Mj**2
+        return f.squeeze()
 
     # print( phi )
-    print( 'cost in', CostF(phi,MDF) )
-    results = minimize( CostF, phi, args=(MDF) )
+    print("cost in", CostF(phi, MDF))
+    results = minimize(CostF, phi, args=(MDF))
 
-    psi_hat = results.x 
-    print( 'cost out', CostF(psi_hat,MDF) )
+    psi_hat = results.x
+    print("cost out", CostF(psi_hat, MDF))
     psi_hat = psi_hat.reshape(2, MDF.d, -1)
-    psi_hat = psi_hat[0] + 1j*psi_hat[1] 
-    
+    psi_hat = psi_hat[0] + 1j * psi_hat[1]
+
     # psi_hat = psi_hat - eigenproj@psi_hat
     # psi_hat = psi_hat / np.linalg.norm( psi_hat, axis=0 )
-    psi_hat = psi_hat @ psi_hat.T.conj() 
-    psi_hat = ( eigenval * eigenproj + (1-eigenval) * psi_hat / np.trace(psi_hat) )
+    psi_hat = psi_hat @ psi_hat.T.conj()
+    psi_hat = eigenval * eigenproj + (1 - eigenval) * psi_hat / np.trace(psi_hat)
 
     return psi_hat
 
+
 #############################################
 
-def SelfGuidedTomography( infidelity,
-                            guess, 
-                            num_iter, 
-                            callback = lambda x, i : None,
-                            postprocessing = None,
-                            ):
 
+def SelfGuidedTomography(
+    infidelity,
+    guess,
+    num_iter,
+    callback=lambda x, i: None,
+    postprocessing=None,
+):
     GAINS = {
-            "a": 3.0,
-            "b": 0.2,
-            "A": .0,
-            "s": 1.0,
-            "t": 1 / 6,
-            }
+        "a": 3.0,
+        "b": 0.2,
+        "A": 0.0,
+        "s": 1.0,
+        "t": 1 / 6,
+    }
 
-    def update( guess, update ):
+    def update(guess, update):
         guess = guess + update
-        guess = guess / np.linalg.norm( guess )
+        guess = guess / np.linalg.norm(guess)
         if postprocessing is not None:
-            guess = postprocessing( guess ) 
+            guess = postprocessing(guess)
         return guess
 
-    optimizer = CSPSA( init_iter=0, 
-                        callback=callback,
-                        gains = GAINS,
-                        apply_update = update,
-                        perturbations=(1,-1,1j,-1j,)
-                        )
+    optimizer = CSPSA(
+        init_iter=0,
+        callback=callback,
+        gains=GAINS,
+        apply_update=update,
+        perturbations=(
+            1,
+            -1,
+            1j,
+            -1j,
+        ),
+    )
 
-    results = optimizer.run(infidelity, guess, 
-                            progressbar=False, num_iter=num_iter)
+    results = optimizer.run(infidelity, guess, progressbar=False, num_iter=num_iter)
 
-    return results 
-    
+    return results

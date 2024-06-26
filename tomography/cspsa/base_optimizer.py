@@ -8,6 +8,7 @@ from typing import Callable, Sequence
 
 from .defaults import *
 
+
 class CSPSA:
     def __init__(
         self,
@@ -22,7 +23,6 @@ class CSPSA:
         quantum_natural: bool = False,
         hessian_postprocess_method: str = DEFAULT_HESSIAN_POSTPROCESS_METHOD,
     ):
-
         self.gains = copy(gains)
         self.init_iter = init_iter
         self.sign = 2 * maximize - 1
@@ -101,7 +101,6 @@ class CSPSA:
         previous_hessian: np.ndarray | None = None,
         fidelity: Callable | None = None,
     ) -> np.ndarray | tuple[np.ndarray, np.ndarray]:
-
         first_order = not (self.second_order or self.quantum_natural)
         if first_order:
             return first_order_step(self, fun, guess)
@@ -117,7 +116,6 @@ class CSPSA:
         initial_hessian=None,
         fidelity=None,
     ) -> np.ndarray:
-
         new_guess = np.copy(guess)
         iterator = range(self.init_iter, self.init_iter + num_iter)
         iterator = tqdm(iterator, disable=not progressbar)
@@ -142,7 +140,6 @@ class CSPSA:
 
 # =============== First order
 def first_order_step(self: "CSPSA", fun: Callable, guess: np.ndarray) -> np.ndarray:
-
     ak, bk = self._stepsize_and_pert()
 
     delta = bk * np.random.choice(self.perturbations, len(guess))
@@ -152,10 +149,10 @@ def first_order_step(self: "CSPSA", fun: Callable, guess: np.ndarray) -> np.ndar
     inv_delta_conj = []
     for d in delta:
         if d == 0:
-            inv_delta_conj.append( 0 )
+            inv_delta_conj.append(0)
         else:
-            inv_delta_conj.append( 1/np.conj(d) )
-    inv_delta_conj = np.array( inv_delta_conj )
+            inv_delta_conj.append(1 / np.conj(d))
+    inv_delta_conj = np.array(inv_delta_conj)
 
     update = self.sign * 0.5 * ak * df * inv_delta_conj
     new_guess = self.apply_update(guess, update)
@@ -176,7 +173,6 @@ def preconditioned_step(
     previous_hessian: np.ndarray | None = None,
     fidelity: Callable | None = None,
 ) -> tuple[np.ndarray, np.ndarray]:
-
     if previous_hessian is None:
         previous_hessian = self.default_hessian(guess)
 
@@ -199,7 +195,6 @@ def preconditioned_update(
     previous_hessian: np.ndarray,
     fidelity: Callable | None = None,
 ) -> tuple[np.ndarray, np.ndarray]:
-
     ak, bk = self._stepsize_and_pert()
 
     delta = bk * np.random.choice(self.perturbations, len(guess))
@@ -257,7 +252,6 @@ def hessian_postprocess(
     method: str = DEFAULT_HESSIAN_POSTPROCESS_METHOD,
     tol: float = DEFAULT_HESSIAN_POSTPROCESS_TOL,
 ) -> np.ndarray:
-
     k = self.iter
     I = np.eye(H.shape[0])
 
