@@ -96,6 +96,7 @@ def SelfGuidedTomography(
     num_iter,
     callback=lambda x, i: None,
     postprocessing=None,
+    progressbar=False,
 ):
     GAINS = {
         "a": 3.0,
@@ -113,18 +114,15 @@ def SelfGuidedTomography(
         return guess
 
     optimizer = CSPSA(
-        init_iter=0,
         callback=callback,
         gains=GAINS,
         apply_update=update,
-        perturbations=(
-            1,
-            -1,
-            1j,
-            -1j,
-        ),
     )
 
-    results = optimizer.run(infidelity, guess, progressbar=False, num_iter=num_iter)
+    results = optimizer.run(infidelity,
+                            guess,
+                            progressbar=progressbar,
+                            num_iter=num_iter,
+                            )
 
     return results
