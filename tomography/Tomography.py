@@ -23,42 +23,33 @@ def NearSparseTomography(phi, MDF: Mean_Direct_Fidelity):
         f = 0.0
         for j, Mj in enumerate(M):
             if j in M_d:
-                f += abs(M_d[j] - Mj) ** 2
+                f += abs(M_d[j] - Mj) ** 2 / ( 1 - Mj**2 + 1e-10 )
             else:
                 f += 0.1 * abs(Mj) ** 2
 
-        return f
+        return np.real(f)
 
-    results = minimize(CostF, phi, args=(MDF))
+    results = minimize(CostF, phi, args=(MDF), tol=0.0001 )
 
     psi_hat = results.x / np.linalg.norm(results.x)
     psi_hat = psi_hat.reshape(2, -1)
     psi_hat = psi_hat[0] + 1j * psi_hat[1]
 
-    return psi_hat
+    return psi_hat 
 
 
-def NearSparseTomography_v2(phi, eigenvec, eigenval, MDF: Mean_Direct_Fidelity):
+def NearSparseTomography_v2(phi, MDF: Mean_Direct_Fidelity):
     """
     phi : initial condition for the search
     MDF : FastFidelity or RandomMeasurements class
     """
-
-    eigenproj = np.outer(eigenvec, eigenvec.conj())
-
-    phi = phi - eigenproj @ phi
-    phi = phi / np.linalg.norm(phi, axis=0)
     phi = np.array([phi.real, phi.imag]).reshape(-1)
 
     def CostF(psi, MDF):
         psi = psi.reshape(2, MDF.d, -1)
         psi = psi[0] + 1j * psi[1]
-
-        # psi = psi - eigenproj@psi
-        # psi = psi / np.linalg.norm( psi, axis=0 )
-
         psi = psi @ psi.T.conj()
-        psi = eigenval * eigenproj + (1 - eigenval) * psi / np.trace(psi)
+        psi = psi /np.trace( psi )
 
         M_d = MDF.Measures
         M = InnerProductMatrices(psi, MDF.NQ * [MDF.Sigmamu]).reshape(
@@ -67,24 +58,26 @@ def NearSparseTomography_v2(phi, eigenvec, eigenval, MDF: Mean_Direct_Fidelity):
         f = 0
         for j, Mj in enumerate(M):
             if j in M_d:
-                f += (M_d[j] - Mj) ** 2
+                f += abs(M_d[j] - Mj) ** 2 / ( 1 - Mj**2 + 1e-10 )
             else:
-                f += 0.1 * Mj**2
-        return f.squeeze()
+                f += 0.1 * abs(Mj)**2
+        return np.real(f).squeeze()
 
     # print( phi )
-    print("cost in", CostF(phi, MDF))
-    results = minimize(CostF, phi, args=(MDF))
+    # print("cost in", CostF(phi, MDF))
+    results = minimize(CostF, phi, args=(MDF), tol=0.01)
 
     psi_hat = results.x
-    print("cost out", CostF(psi_hat, MDF))
+    # print("cost out", CostF(psi_hat, MDF))
     psi_hat = psi_hat.reshape(2, MDF.d, -1)
     psi_hat = psi_hat[0] + 1j * psi_hat[1]
 
     # psi_hat = psi_hat - eigenproj@psi_hat
     # psi_hat = psi_hat / np.linalg.norm( psi_hat, axis=0 )
     psi_hat = psi_hat @ psi_hat.T.conj()
-    psi_hat = eigenval * eigenproj + (1 - eigenval) * psi_hat / np.trace(psi_hat)
+    # psi_hat = eigenval * eigenproj + (1 - eigenval) * psi_hat / np.trace(psi_hat)
+    # psi_hat = eigenproj + psi_hat @ psi_hat.T.conj()
+    psi_hat = psi_hat /np.trace( psi_hat )
 
     return psi_hat
 
